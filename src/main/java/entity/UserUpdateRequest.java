@@ -9,7 +9,6 @@ public class UserUpdateRequest {
         this.email = email;
     }
 
-    // Геттеры и сеттеры
     public String getName() {
         return name;
     }
