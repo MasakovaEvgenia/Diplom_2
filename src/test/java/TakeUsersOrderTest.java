@@ -35,13 +35,13 @@ public class TakeUsersOrderTest {
     @After
     public void tearDown() {
         if (accessToken != null) {
-            UserApi.deleteUser("Bearer " + accessToken);
+            UserApi.deleteUser( accessToken);
         }
     }
 
     @Test
     public void testGetOrdersWithAuthorization() {
-        Response response = TakeUsersOrderApi.getOrders("Bearer " + accessToken);
+        Response response = TakeUsersOrderApi.getOrders(accessToken);
         response.then().statusCode(SC_OK)
                 .body("success", equalTo(true))
                 .body("orders", notNullValue());

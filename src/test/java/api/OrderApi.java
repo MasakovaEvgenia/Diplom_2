@@ -20,7 +20,7 @@ public class OrderApi {
                 .post(BASE_URL + ORDER_ENDPOINT);
     }
 
-    @Step("Create order with invalid ingredients")
+    /*@Step("Create order with invalid ingredients")
     public static Response createOrderWithInvalidIngredients(String token) {
         return given()
                 .header("Content-type", "application/json")
@@ -28,5 +28,5 @@ public class OrderApi {
                 .body("{\"ingredients\": [\"invalid_hash\"]}")
                 .when()
                 .post(BASE_URL + ORDER_ENDPOINT);
-    }
+    }*/
 }

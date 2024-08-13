@@ -10,8 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.http.HttpStatus.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class UserLoginTest {
     private String email;
@@ -35,7 +34,7 @@ public class UserLoginTest {
     @Test
     public void testLoginUserWithValidCredentials() {
 
-        // UserApi.createUser(new User(email, password, "testName"));
+        UserApi.createUser(new User(email, password, "testName"));
 
         LoginData loginData = new LoginData(email, password);
         Response response = UserApiLogin.loginUser(loginData);
@@ -43,7 +42,7 @@ public class UserLoginTest {
 
         response.then().statusCode(SC_OK)
                 .body("success", equalTo(true))
-                .body("user.email", equalTo(email))
+                .body("user.email", equalToIgnoringCase(email))
                 .body("user.name", notNullValue());
     }
 

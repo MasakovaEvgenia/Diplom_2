@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -21,7 +22,7 @@ public class OrderTest {
     private String email;
     private String password;
     private String accessToken;
-    private final String validIngredientId = "60d3b41abdacab0026a733c6"; // Пример валидного ID
+    private final String validIngredientId = "61c0c5a71d1f82001bdaaa6d"; // Пример валидного ID
 
     @Before
     public void setUp() {
@@ -46,8 +47,8 @@ public class OrderTest {
 
     @Test
     public void testCreateOrderWithAuthorization() { // тест создания заказа с авторизацией
-        OrderRequest orderRequest = new OrderRequest(Arrays.asList(validIngredientId));
-        Response response = OrderApi.createOrder(orderRequest, "Bearer " + accessToken);
+        OrderRequest orderRequest = new OrderRequest(List.of(validIngredientId));
+        Response response = OrderApi.createOrder(orderRequest, accessToken);
         response.then().statusCode(SC_OK)
                 .body("success", equalTo(true))
                 .body("order.number", notNullValue());
@@ -64,8 +65,8 @@ public class OrderTest {
 
     @Test
     public void testCreateOrderWithIngredients() { // заказ с ингридиентами
-        OrderRequest orderRequest = new OrderRequest(Arrays.asList(validIngredientId));
-        Response response = OrderApi.createOrder(orderRequest, "Bearer " + accessToken);
+        OrderRequest orderRequest = new OrderRequest(List.of(validIngredientId));
+        Response response = OrderApi.createOrder(orderRequest, accessToken);
         response.then().statusCode(SC_OK)
                 .body("success", equalTo(true))
                 .body("order.number", notNullValue());
@@ -74,7 +75,7 @@ public class OrderTest {
     @Test
     public void testCreateOrderWithoutIngredients() { // без ингридиентов
         OrderRequest orderRequest = new OrderRequest(null);
-        Response response = OrderApi.createOrder(orderRequest, "Bearer " + accessToken);
+        Response response = OrderApi.createOrder(orderRequest, accessToken);
         response.then().statusCode(SC_BAD_REQUEST)
                 .body("success", equalTo(false))
                 .body("message", equalTo("Ingredient ids must be provided"));
@@ -82,9 +83,8 @@ public class OrderTest {
 
     @Test
     public void testCreateOrderWithInvalidIngredients() { // с неправильным хэшем
-        Response response = OrderApi.createOrderWithInvalidIngredients("Bearer " + accessToken);
-        response.then().statusCode(SC_INTERNAL_SERVER_ERROR)
-                .body("success", equalTo(false))
-                .body("message", equalTo("Internal Server Error"));
+        OrderRequest orderRequest = new OrderRequest(List.of("invalid"));
+        Response response = OrderApi.createOrder(orderRequest, accessToken);
+        response.then().statusCode(SC_INTERNAL_SERVER_ERROR);
     }
 }

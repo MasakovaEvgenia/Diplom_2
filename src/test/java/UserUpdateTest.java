@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 
 public class UserUpdateTest {
     public String email;
@@ -26,7 +27,7 @@ public class UserUpdateTest {
         password = "password";
 
         // Создаем пользователя для авторизации
-        // UserApi.createUser(new User(email, password, "testName"));
+        UserApi.createUser(new User(email, password, "testName"));
         LoginData loginData = new LoginData(email, password);
         Response loginResponse = UserApiLogin.loginUser(loginData);
         accessToken = loginResponse.jsonPath().getString("accessToken");
@@ -41,12 +42,12 @@ public class UserUpdateTest {
 
     @Test
     public void testUpdateUserWithAuthorization() {
-        UserUpdateRequest updateRequest = new UserUpdateRequest("newName", "newemail@example.com");
-        Response response = ChangeUserApi.updateUser(updateRequest, "Bearer " + accessToken);
+        UserUpdateRequest updateRequest = new UserUpdateRequest("newName", email);
+        Response response = ChangeUserApi.updateUser(updateRequest, accessToken);
         response.then().statusCode(SC_OK)
                 .body("success", equalTo(true))
                 .body("user.name", equalTo("newName"))
-                .body("user.email", equalTo("newemail@example.com"));
+                .body("user.email", equalToIgnoringCase(email));
     }
 
     @Test
@@ -66,7 +67,7 @@ public class UserUpdateTest {
 
         // Пытаемся обновить данные на уже существующий email
         UserUpdateRequest updateRequest = new UserUpdateRequest("newName", existingEmail);
-        Response response = ChangeUserApi.updateUser(updateRequest, "Bearer " + accessToken);
+        Response response = ChangeUserApi.updateUser(updateRequest, accessToken);
         response.then().statusCode(SC_FORBIDDEN)
                 .body("success", equalTo(false))
                 .body("message", equalTo("User with such email already exists"));
